@@ -30,9 +30,9 @@ INCLUDE Irvine32.inc
 mGetString		MACRO	userVal, display_string
 
 	mDisplayString	display_string				; calls mDisplayString to display user input prompt
-	MOV				ECX, 13						; sets character limit for Irving's ReadString
-	MOV				EDX,	userVal				; loads the offset address for the temporary storage variable
-	CALL			ReadString
+	MOV	ECX, 13						; sets character limit for Irving's ReadString
+	MOV	EDX,	userVal				; loads the offset address for the temporary storage variable
+	CALL	ReadString
 
 ENDM
 
@@ -46,35 +46,35 @@ ENDM
 ; ***************************************************************
 mDisplayString		MACRO	display_string
 
-	MOV			EDX,	display_string			; loads the offset set for whatever string is to be displayed
-	CALL		WriteString
+	MOV	EDX,	display_string			; loads the offset set for whatever string is to be displayed
+	CALL	WriteString
 
 ENDM
 
 .data
 
-intro_string				BYTE	"String Primitives and Macros by Steve Thatcher (ThatChes)",13,10,13,10,13,10,0
+intro_string			BYTE	"String Primitives and Macros by Steve Thatcher (ThatChes)",13,10,13,10,13,10,0
 description_string_1_1		BYTE	"If you provide 10 signed integers, small enough to fit in 32-bits (-2^32 through 2^31),",13,10,0
 description_string_1_2		BYTE	"I will convert them from string to integer, display the list of integers, their sum, and their average",13,10,0
 description_string_1_3		BYTE	"then return the result as a string! Neato!",13,10,13,10,0
 
-loop_counter				SDWORD	0
-userEntryArray				SDWORD	10 DUP(0)
+loop_counter			SDWORD	0
+userEntryArray			SDWORD	10 DUP(0)
 asciiMidProcessStorage		SDWORD	0
-sumStorage					SDWORD	0
-intLengthCounter			SDWORD	0
+sumStorage			SDWORD	0
+intLengthCounter		SDWORD	0
 conversionPlaceValue		SDWORD  0
-intInProcess				SDWORD	0
-is_negative					BYTE	0
-userInputString				BYTE	100 DUP(0)			; 10 integer spaces with room for a sign
-user_input_prompt			BYTE	"Please enter a signed number: ",0
-error_prompt				BYTE	"ERROR: Your number was not signed, too large, empty, or contained invalid characters. Try again!",13,10,0
-reverseString				BYTE	11 DUP(0)			; 10 integer spaces with room for a sign
+intInProcess			SDWORD	0
+is_negative			BYTE	0
+userInputString			BYTE	100 DUP(0)			; 10 integer spaces with room for a sign
+user_input_prompt		BYTE	"Please enter a signed number: ",0
+error_prompt			BYTE	"ERROR: Your number was not signed, too large, empty, or contained invalid characters. Try again!",13,10,0
+reverseString			BYTE	11 DUP(0)			; 10 integer spaces with room for a sign
 
 list_of_integers_prompt		BYTE	"Here are the numbers you entered: ",0
-sum_prompt					BYTE	"The sum of the integers you entered is: ",0
-average_prompt				BYTE	"The rounded (down) average of the integers your entered is: ",0
-space_string				BYTE	", ",0
+sum_prompt			BYTE	"The sum of the integers you entered is: ",0
+average_prompt			BYTE	"The rounded (down) average of the integers your entered is: ",0
+space_string			BYTE	", ",0
 
 
 .code
@@ -84,16 +84,16 @@ main PROC
 	PUSH			OFFSET	description_string_1_1
 	PUSH			OFFSET	description_string_1_2
 	PUSH			OFFSET	description_string_1_3
-	CALL			introduction				; calls introduction to display the introduction and prompts
+	CALL			introduction			; calls introduction to display the introduction and prompts
 
-	MOV				EDI, OFFSET userEntryArray  ; Sets address for SDWORD storage array for converted integer strings
-	MOV				ECX, 10						; Sets loop counter for 10 user entered integer strings
+	MOV			EDI, OFFSET userEntryArray  	; Sets address for SDWORD storage array for converted integer strings
+	MOV			ECX, 10				; Sets loop counter for 10 user entered integer strings
 	PUSH			SDWORD PTR sumStorage		; 56
 _ArrayLoop:
 	PUSH			asciiMidProcessStorage		; 52
 	PUSH			conversionPlaceValue		; 48
-	PUSH			intLengthCounter			; 44
-	PUSH			intInProcess				; 40
+	PUSH			intLengthCounter		; 44
+	PUSH			intInProcess			; 40
 	PUSH			SDWORD PTR is_negative		; 36
 	PUSH			OFFSET	error_prompt		; 32
 	PUSH			OFFSET	userInputString		; 28
@@ -101,29 +101,29 @@ _ArrayLoop:
 	CALL			ReadVal
 	LOOP			_ArrayLoop
 
-	MOV				EAX, SDWORD PTR [EBP - 16]	
-	MOV				sumStorage, EAX				; Stores the sum in sumStorage for use in WriteVal
+	MOV			EAX, SDWORD PTR [EBP - 16]	
+	MOV			sumStorage, EAX			; Stores the sum in sumStorage for use in WriteVal
 
-	MOV				ESI, OFFSET userEntryArray	; Move userEntryArray into ESI to prep STOSB
-	MOV				ECX, 12						; sets up 12 cycles for loop ()
-	PUSH			loop_counter				; 68
+	MOV			ESI, OFFSET userEntryArray	; Move userEntryArray into ESI to prep STOSB
+	MOV			ECX, 12				; sets up 12 cycles for loop ()
+	PUSH			loop_counter			; 68
 _WriteArrayLoop:
-	MOV				EAX, 0
-	MOV				SDWORD PTR userInputString, EAX
-	MOV				SDWORD PTR userInputString + 4, EAX
-	MOV				SDWORD PTR userInputString + 8, EAX
-	MOV				SDWORD PTR reverseString, EAX
-	MOV				SDWORD PTR reverseString + 4, EAX
-	MOV				SDWORD PTR reverseString + 8, EAX
-	MOV				asciiMidProcessStorage, 0
-	MOV				EDI, OFFSET userInputString ; Storage array  ; Points EDI to the memory location of userInputString which will store/display the convert interger to string value
+	MOV			EAX, 0
+	MOV			SDWORD PTR userInputString, EAX
+	MOV			SDWORD PTR userInputString + 4, EAX
+	MOV			SDWORD PTR userInputString + 8, EAX
+	MOV			SDWORD PTR reverseString, EAX
+	MOV			SDWORD PTR reverseString + 4, EAX
+	MOV			SDWORD PTR reverseString + 8, EAX
+	MOV			asciiMidProcessStorage, 0
+	MOV			EDI, OFFSET userInputString ; Storage array  ; Points EDI to the memory location of userInputString which will store/display the convert interger to string value
 	PUSH			OFFSET	average_prompt		; 64
-	PUSH			OFFSET	sum_prompt			; 60 
+	PUSH			OFFSET	sum_prompt		; 60 
 	PUSH			SDWORD PTR sumStorage		; 56
 	PUSH			asciiMidProcessStorage		; 52
 	PUSH			OFFSET reverseString		; 48
-	PUSH			intLengthCounter			; 44
-	PUSH			intInProcess				; 40
+	PUSH			intLengthCounter		; 44
+	PUSH			intInProcess			; 40
 	PUSH			SDWORD PTR is_negative		; 36
 	PUSH			OFFSET	space_string		; 32
 	PUSH			OFFSET	userInputString		; 28
@@ -131,7 +131,7 @@ _WriteArrayLoop:
 	CALL			WriteVal
 	LOOP			_WriteArrayLoop
 
-	Invoke ExitProcess,0						; exit to operating system
+	Invoke ExitProcess,0		; exit to operating system
 main ENDP
 
 ; ***************************************************************
@@ -145,13 +145,13 @@ main ENDP
 ; ***************************************************************
 introduction PROC USES EDX
 	PUSH			EBP				
-	MOV				EBP, ESP					; set new base pointer location for frame stack
-	mDisplayString	[EBP + 24]
-	mDisplayString	[EBP + 20]
-	mDisplayString	[EBP + 16]
-	mDisplayString	[EBP + 12]
-	POP				EBP
-	RET				16							; returns to main and resets stack for next procedure
+	MOV			EBP, ESP		; set new base pointer location for frame stack
+	mDisplayString		[EBP + 24]
+	mDisplayString		[EBP + 20]
+	mDisplayString		[EBP + 16]
+	mDisplayString		[EBP + 12]
+	POP			EBP
+	RET			16			; returns to main and resets stack for next procedure
 introduction ENDP
 
 
@@ -167,40 +167,40 @@ introduction ENDP
 ; ***************************************************************
 ReadVal PROC  USES EAX EBX ECX EDX
 	PUSH			EBP
-	MOV				EBP, ESP					; set new base pointer location for frame stack
+	MOV			EBP, ESP			; set new base pointer location for frame stack
 
 _newUserEntry:
 	mGetString		[EBP + 28], [EBP + 24]		; calls macro for user entry
-	CMP				EAX, 0						; Checks for a null entry from user, which is invalid per program requirements
-	JE				_outOfRange
-	MOV				ESI, [EBP + 28]				; Point ESI to UserInputString OFFSET to prep LODSB
+	CMP			EAX, 0				; Checks for a null entry from user, which is invalid per program requirements
+	JE			_outOfRange
+	MOV			ESI, [EBP + 28]			; Point ESI to UserInputString OFFSET to prep LODSB
 
 _stringConversion:
 	LODSB
-	CMP				AL, 43						; checks for plus sign
-	JE				_stringConversion
-	CMP				AL, 45						; checks for negative sign
-	JE				_stringConversionNegative
+	CMP			AL, 43				; checks for plus sign
+	JE			_stringConversion
+	CMP			AL, 45				; checks for negative sign
+	JE			_stringConversionNegative
 
 _stringConversionPositive:
-	CMP				AL, 0						; check to see if string is zero
-	JE				_isZero
-	CMP				AL, 48						; checks lower boundary of zero
-	JB				_outOfRange
-	CMP				AL, 57						; check upper boundary of nine
-	JA				_outOfRange
-	SUB				AL, 48						; subtracts 48 from ascii character to convert to integer
-	MOV				BYTE PTR [EBP + 52], AL		; stores in ascii holding variable
-	MOV				EAX,  [EBP + 40]			; loads integer in process into EAX
-	MOV				EBX, 10
-	MUL				EBX							; follows ascii to integer conversion algorithm from module 10
-	CMP				EDX, 0
-	JNE				_outOfRange
-	MOV				EBX, [EBP + 52]				; reloads previous mid-conversion value
-	ADD				EAX, EBX
-	JO				_outOfRange
+	CMP			AL, 0				; check to see if string is zero
+	JE			_isZero
+	CMP			AL, 48				; checks lower boundary of zero
+	JB			_outOfRange
+	CMP			AL, 57				; check upper boundary of nine
+	JA			_outOfRange
+	SUB			AL, 48				; subtracts 48 from ascii character to convert to integer
+	MOV			BYTE PTR [EBP + 52], AL		; stores in ascii holding variable
+	MOV			EAX,  [EBP + 40]		; loads integer in process into EAX
+	MOV			EBX, 10
+	MUL			EBX				; follows ascii to integer conversion algorithm from module 10
+	CMP			EDX, 0
+	JNE			_outOfRange
+	MOV			EBX, [EBP + 52]			; reloads previous mid-conversion value
+	ADD			EAX, EBX
+	JO			_outOfRange
 
-	MOV				SDWORD PTR [EBP + 40], EAX	; loads integer in process
+	MOV			SDWORD PTR [EBP + 40], EAX	; loads integer in process
 	LODSB
 	LOOP			_stringConversionPositive
 
